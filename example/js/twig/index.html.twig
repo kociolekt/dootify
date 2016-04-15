@@ -1,0 +1,13 @@
+<div>
+    hello {{ item }}!
+</div>
+{% for post in posts %}
+    <article>
+        <header>
+            <h1>{{ post.title }}</h1>
+        </header>
+        <p>{{ post.body }}</p>
+    </article>
+{% endfor %}
+<div class="button" data-dootify="button">asd</div>
+

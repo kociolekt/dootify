@@ -2,3 +2,5 @@
 /node_modules
 npm-debug.log
 # Created by .ignore support plugin (hsz.mobi)
+/example/dist
+/example/node_modules
