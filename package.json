@@ -1,0 +1,32 @@
+{
+  "name": "dootify",
+  "version": "1.0.0",
+  "description": "Templates autoselecting dom elements. Doomify port for twig template system. Don't let DOM be your DOM.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kociolekt/dootify.git"
+  },
+  "keywords": [
+    "browserify",
+    "dootify",
+    "twig",
+    "template",
+    "dom"
+  ],
+  "author": "Tomek",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kociolekt/dootify/issues"
+  },
+  "homepage": "https://github.com/kociolekt/dootify#readme",
+  "dependencies": {
+    "auto-elems-from-dom": "0.0.0",
+    "html-minifier": "^1.1.1",
+    "object-assign": "^4.0.1",
+    "twig": "^0.8.9"
+  }
+}
