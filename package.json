@@ -1,6 +1,6 @@
 {
   "name": "dootify",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Templates autoselecting dom elements. Doomify port for twig template system. Don't let DOM be your DOM.",
   "main": "index.js",
   "scripts": {
