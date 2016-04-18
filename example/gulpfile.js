@@ -29,9 +29,9 @@ gulp.task('js-browserify', function() {
     })
     .pipe(source('main-a.js'))
     .pipe(buffer())
-    .pipe(gif(!dev, sourcemaps.init({loadMaps: true})))
-    .pipe(gif(!dev, uglify()))
-    .pipe(gif(!dev, sourcemaps.write('./')))
+    //.pipe(gif(!dev, sourcemaps.init({loadMaps: true})))
+    //.pipe(gif(!dev, uglify()))
+    //.pipe(gif(!dev, sourcemaps.write('./')))
     .pipe(gulp.dest('./dist'));
 });
 

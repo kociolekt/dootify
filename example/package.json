@@ -2,7 +2,7 @@
   "private": true,
   "dependencies": {
     "browserify": "^11.2.0",
-    "dootify": "^1.0.0",
+    "dootify": "^2.0.0",
     "gulp": "^3.9.0",
     "gulp-if": "^2.0.0",
     "gulp-sourcemaps": "^1.6.0",

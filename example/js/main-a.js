@@ -2,10 +2,7 @@ var
   $ = require('jquery'),
   template = require('./twig/index.html.twig');
 
-console.log(common, a, b);
-
 $(document).ready(function() {
-  console.log(template);
   var t = template({
     item: 'world',
     posts: [
@@ -23,6 +20,6 @@ $(document).ready(function() {
       }
     ]
   });
-  console.log(t);
+  console.log(t, t.button);
   $(document.body).find('#content').append(t);
 });
