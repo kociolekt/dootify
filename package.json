@@ -26,7 +26,6 @@
   "dependencies": {
     "auto-elems-from-dom": "0.0.0",
     "html-minifier": "^1.1.1",
-    "object-assign": "^4.0.1",
     "twig": "^0.8.9"
   }
 }

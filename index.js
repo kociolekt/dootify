@@ -1,77 +1,83 @@
-var minify = require('html-minifier').minify;
-var stream = require('stream');
-var util = require('util');
-var objectAssign = require('object-assign');
+'use strict';
 
-var MINIFIER_DEFAULTS = {
-  // http://perfectionkills.com/experimenting-with-html-minifier/#options
+var twig             = require('twig').twig;
+var through          = require('through2');
+var minify           = require('html-minifier').minify;
+var autoElemsFromDom = require('auto-elems-from-dom');
+
+var ext = /\.(twig)$/;
+
+var minifyDefaults = {
   removeComments: true,
-  collapseWhitespace: true,
-  conservativeCollapse: true
+  collapseWhitespace: true
 };
 
-var DEFAULTS = {
-  templateOpts: {},
-  minifierOpts: {},
-  noMinify: false
-};
+function compile(id, str) {
+  var minified = minify(str, minifyDefaults);
 
-function compile(str, minifierOpts) {
-  var minified = minifierOpts === false ? str : minify(str, minifierOpts);
-  return minified;
+  var template = twig({
+    id: id,
+    data: minified
+  });
+
+  var tokens = JSON.stringify(template.tokens);
+  // the id will be the filename and path relative to the require()ing module
+  return 'function(data) {'+
+    '  var template = twig({'+
+    '    id: __filename,'+
+    '    data:' + tokens + ','+
+    '    precompiled: true,'+
+    '    allowInlineIncludes: true'+
+    '  });'+
+    '  var fragment = autoElemsFromDom(' +
+    '    template.render(data),' +
+    '    \'attr\',' +
+    '    \'data-dootify\',' +
+    '    true' +
+    '  );'+
+    '  return fragment;'+
+    '}';
 }
 
-function wrap(source) {
-  return 'var dootifyProcess = require(\'dootify/process\');\n' +
-    'module.exports = dootifyProcess(\'' + source + '\');';
+function process(source) {
+  return (
+    'var twig = require(\'twig\').twig;\n' +
+    'var autoElemsFromDom = require(\'auto-elems-from-dom\');\n' +
+    'module.exports = ' + source + ';\n'
+  );
 }
 
-function transform(src, opts) {
-  var compiled = compile(src, opts.noMinify ? false : opts.minifierOpts);
-  var body = wrap(compiled);
-  return body;
-}
+function twigify(file, opts) {
+  if (!ext.test(file)) return through();
+  if (!opts) opts = {};
 
-var templateExtension = /\.(tmt|tpl|html|twig)$/;
+  var id = file;
+  // @TODO: pass a path via CLI to use for relative file paths
+  //opts.path ? file.replace(opts.path, '') : file;
 
-function Dootify(opts) {
-  stream.Transform.call(this);
+  var buffers = [];
 
-  opts = objectAssign({}, opts, DEFAULTS);
-
-  if (opts.minifierOpts !== false) {
-    opts.minifierOpts = objectAssign({}, opts.minifierOpts, MINIFIER_DEFAULTS);
+  function push(chunk, enc, next) {
+    buffers.push(chunk);
+    next();
   }
 
-  this._data = '';
-  this._opts = opts;
+  function end(next) {
+    var str = Buffer.concat(buffers).toString();
+    var compiledTwig;
+
+    try {
+      compiledTwig = compile(id, str);
+    } catch(e) {
+      return this.emit('error', e);
+    }
+
+    this.push(process(compiledTwig));
+    next();
+  }
+
+  return through(push, end);
 }
 
-util.inherits(Dootify, stream.Transform);
-
-Dootify.prototype._transform = function (buf, enc, next) {
-  this._data += buf;
-  next();
-};
-
-Dootify.prototype._flush = function (next) {
-  try {
-    this.push(transform(this._data, this._opts));
-  } catch(err) {
-    this.emit('error', err);
-    return;
-  }
-  next();
-};
-
-function dootify(file, opts) {
-  if (!templateExtension.test(file)) {
-    return new stream.PassThrough();
-  }
-  return new Dootify(opts);
-}
-
-module.exports = dootify;
+module.exports = twigify;
 module.exports.compile = compile;
-module.exports.wrap = wrap;
-module.exports.transform = transform;
