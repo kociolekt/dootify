@@ -80,4 +80,5 @@ function twigify(file, opts) {
 }
 
 module.exports = twigify;
+module.exports.process = process;
 module.exports.compile = compile;
