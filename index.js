@@ -15,10 +15,14 @@ var minifyDefaults = {
 function compile(id, str) {
   var minified = minify(str, minifyDefaults);
 
-  var template = twig({
-    id: id,
-    data: minified
-  });
+  // check if template already exists
+  var template = twig({ ref: id });
+  if (!template) {
+    template = twig({
+      id: id,
+      data: minified
+    });
+  }
 
   var tokens = JSON.stringify(template.tokens);
   // the id will be the filename and path relative to the require()ing module
