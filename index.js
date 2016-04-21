@@ -32,7 +32,6 @@ function compile(id, str) {
   // the id will be the filename and path relative to the require()ing module
   return 'function(data) {'+
     '  var template = twig({'+
-    '    id: \'' + id + '\','+
     '    data:' + tokens + ','+
     '    precompiled: true,'+
     '    allowInlineIncludes: true'+
