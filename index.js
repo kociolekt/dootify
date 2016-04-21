@@ -13,10 +13,14 @@ var minifyDefaults = {
 };
 
 function compile(id, str) {
-  var minified = minify(str, minifyDefaults);
+  var minified = minify(str, minifyDefaults),
+    template,
+    tokens;
+
+  id = (id+'').replace(/[^a-zA-Z]/g, '');
 
   // check if template already exists
-  var template = twig({ ref: id });
+  template = twig({ ref: id });
   if (!template) {
     template = twig({
       id: id,
@@ -24,7 +28,7 @@ function compile(id, str) {
     });
   }
 
-  var tokens = JSON.stringify(template.tokens);
+  tokens = JSON.stringify(template.tokens);
   // the id will be the filename and path relative to the require()ing module
   return 'function(data) {'+
     '  var template = twig({'+
